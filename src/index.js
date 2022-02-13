@@ -19,6 +19,9 @@ import * as audioChat from './audio-chat'
 import { debounce } from './utils';
 
 import { Player, UPDATE_DELTA } from './player'
+
+import { Pet } from './pet';
+
 import { UIScene } from './ui';
 
 const SET_TILE_GAS = 120 * 1000 * 1000 * 1000 * 1000;
@@ -211,6 +214,13 @@ class GameScene extends Phaser.Scene
             this.updateList.add(player);
             return player;
         });
+
+        Phaser.GameObjects.GameObjectFactory.register('pet', function ({ x, y, layers, controlledByUser = false}) {
+            const pet = new Pet({ scene: this.scene, x, y, layers, controlledByUser })
+            this.displayList.add(pet);
+            this.updateList.add(pet);
+            return pet;
+        });
     }
 
     preload() {
@@ -332,6 +342,7 @@ class GameScene extends Phaser.Scene
             [x, y] = hash.substring(1).split(',').map(s => parseFloat(s) * TILE_SIZE_PIXELS);
         }
         this.player = this.add.player({ scene: this, x, y, accountId: account.accountId, controlledByUser: true });
+        this.pet = this.add.pet({scene: this, x, y, controlledByUser: true});
 
         const roundPixels = true;
         this.cameras.main.startFollow(this.player, roundPixels);
